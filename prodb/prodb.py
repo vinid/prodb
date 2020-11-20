@@ -18,9 +18,14 @@ class ProdB():
                 features, labels = inputs
                 sample_weight = None
 
+            self.loss_fn = keras.losses.SparseCategoricalCrossentropy(
+                reduction=tf.keras.losses.Reduction.NONE
+            )
+            self.loss_tracker = tf.keras.metrics.Mean(name="loss")
+
             with tf.GradientTape() as tape:
                 predictions = self(features, training=True)
-                loss = self.config.LOSS_FN(labels, predictions, sample_weight=sample_weight)
+                loss = self.loss_fn(labels, predictions, sample_weight=sample_weight)
 
             # Compute gradients
             trainable_vars = self.trainable_variables
@@ -30,10 +35,10 @@ class ProdB():
             self.optimizer.apply_gradients(zip(gradients, trainable_vars))
 
             # Compute our own metrics
-            self.config.LOSS_TRACKER.update_state(loss, sample_weight=sample_weight)
+            self.loss_tracker.update_state(loss, sample_weight=sample_weight)
 
             # Return a dict mapping metric names to current value
-            return {"loss": self.config.LOSS_TRACKER.result()}
+            return {"loss": self.loss_tracker.result()}
 
         @property
         def metrics(self):
@@ -42,7 +47,7 @@ class ProdB():
             # or at the start of `evaluate()`.
             # If you don't implement this property, you have to call
             # `reset_states()` yourself at the time of your choosing.
-            return [self.config.LOSS_TRACKER]
+            return [self.loss_tracker]
 
     def __init__(self, sessions, config):
         self.sessions = sessions

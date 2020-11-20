@@ -49,8 +49,6 @@ class ProdB():
         self.config = config
         self.vectorize_layer = self.get_vectorize_layer(
             sessions,
-            self.config.VOCAB_SIZE,
-            self.config.MAX_LEN,
             special_tokens=["[mask]"],
         )
 
@@ -219,7 +217,7 @@ class ProdB():
         lowercase = tf.strings.lower(input_data)
         return lowercase
 
-    def get_vectorize_layer(self, texts, vocab_size, max_seq, special_tokens=["[MASK]"]):
+    def get_vectorize_layer(self, texts, special_tokens=["[MASK]"]):
         """Build Text vectorization layer
 
         Args:
@@ -232,16 +230,16 @@ class ProdB():
             layers.Layer: Return TextVectorization Keras Layer
         """
         vectorize_layer = TextVectorization(
-            max_tokens=vocab_size,
+            max_tokens=self.config.VOCAB_SIZE,
             output_mode="int",
             standardize=self.custom_standardization,
-            output_sequence_length=max_seq,
+            output_sequence_length=self.config.MAX_LEN,
         )
         vectorize_layer.adapt(texts)
 
         # Insert mask token in vocabulary
         vocab = vectorize_layer.get_vocabulary()
-        vocab = vocab[2: vocab_size - len(special_tokens)] + ["[mask]"]
+        vocab = vocab[2: self.config.VOCAB_SIZE - len(special_tokens)] + ["[mask]"]
         vectorize_layer.set_vocabulary(vocab)
         return vectorize_layer
 

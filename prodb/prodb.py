@@ -11,6 +11,14 @@ import numpy as np
 class ProdB():
 
     class MaskedLanguageModel(tf.keras.Model):
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.loss_fn = keras.losses.SparseCategoricalCrossentropy(
+                reduction=tf.keras.losses.Reduction.NONE
+            )
+            self.loss_tracker = tf.keras.metrics.Mean(name="loss")
+
         def train_step(self, inputs):
             if len(inputs) == 3:
                 features, labels, sample_weight = inputs
@@ -18,10 +26,7 @@ class ProdB():
                 features, labels = inputs
                 sample_weight = None
 
-            self.loss_fn = keras.losses.SparseCategoricalCrossentropy(
-                reduction=tf.keras.losses.Reduction.NONE
-            )
-            self.loss_tracker = tf.keras.metrics.Mean(name="loss")
+
 
             with tf.GradientTape() as tape:
                 predictions = self(features, training=True)

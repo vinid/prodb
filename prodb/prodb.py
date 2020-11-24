@@ -83,7 +83,7 @@ class ProdB():
         #bert_masked_model.summary()
 
     def __call__(self, *args, **kwargs):
-        self.bert_masked_model.fit(self.mlm_ds, epochs=50, callbacks=[])
+        self.bert_masked_model.fit(self.mlm_ds, epochs=self.config.EPOCHS, callbacks=[])
         self.bert_masked_model.save("bert_mlm_imdb.h5")
 
     def encode(self, texts):

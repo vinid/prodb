@@ -201,30 +201,23 @@ class ProdB():
     def convert_ids_to_tokens(self, id):
         return self.id2token[id]
 
-    def predict_from_tokens(self, list_string_ids):
-        big_answers = []
-
-        sample_tokens = self.vectorize_layer(list_string_ids)
+    def predict_from_tokens(self, string_ids):
+        sample_tokens = self.vectorize_layer([string_ids])
 
         prediction = self.bert_masked_model.predict(sample_tokens)
-
         masked_index = np.where(sample_tokens == self.mask_token_id)
         masked_index = masked_index[1]
+        mask_prediction = prediction[0][masked_index]
 
-        for ind, mask_id in enumerate(masked_index):
-            mask_prediction = prediction[ind][mask_id]
+        top_indices = mask_prediction[0].argsort()[-10:][::-1]
+        values = mask_prediction[0][top_indices]
 
-            top_indices = mask_prediction.argsort()[-10:][::-1]
-            #values = mask_prediction[top_indices]
+        answers = []
+        for i in range(len(top_indices)):
+            p = top_indices[i]
+            answers.append(self.convert_ids_to_tokens(p))
 
-            answers = []
-            for i in range(len(top_indices)):
-                p = top_indices[i]
-
-                answers.append(self.convert_ids_to_tokens(p))
-            big_answers.append(answers)
-
-        return big_answers
+        return answers
 
     def custom_standardization(self, input_data):
         lowercase = tf.strings.lower(input_data)

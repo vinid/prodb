@@ -209,12 +209,15 @@ class ProdB():
         )
         pretrained_bert_model.trainable = False
         collect_embeddings = []
+        pbar = tqdm.tqdm(total=(len(sessions)))
         for sess in sessions:
             k = self.vectorize_layer([sess])
             embeddings = (pretrained_bert_model.predict(k)[0])
             sample_length = len(sess.split())
             embeddings = embeddings[0:sample_length]
             collect_embeddings.append(np.average(embeddings, axis=0))
+            pbar.update(1)
+        pbar.close()
         return collect_embeddings
 
 

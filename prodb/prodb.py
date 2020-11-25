@@ -210,7 +210,7 @@ class ProdB():
         pretrained_bert_model.trainable = False
         collect_embeddings = []
         for sess in sessions:
-            k = self.vectorize_layer(sess)
+            k = self.vectorize_layer([sess])
             embeddings = (pretrained_bert_model.predict(k)[0])
             sample_length = len(sess.split())
             embeddings = embeddings[0:sample_length]

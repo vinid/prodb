@@ -221,7 +221,7 @@ class ProdB():
             for i in range(len(top_indices)):
                 p = top_indices[i]
 
-                answers.append(pb.convert_ids_to_tokens(p))
+                answers.append(self.convert_ids_to_tokens(p))
             big_answers.append(answers)
 
         return big_answers

@@ -20,6 +20,8 @@ class ProdB():
             )
             self.loss_tracker = tf.keras.metrics.Mean(name="loss")
 
+
+
         def train_step(self, inputs):
             if len(inputs) == 3:
                 features, labels, sample_weight = inputs
@@ -55,6 +57,9 @@ class ProdB():
             # `reset_states()` yourself at the time of your choosing.
             return [self.loss_tracker]
 
+    def __str__(self):
+        return "EMB_DIM_{config.EMBED_DIM}_EPOCHS_{config.EPOCHS}_NUM_LAYERS_{config._NUM_LAYERS}".format(config=self.config)
+
     def __init__(self, sessions, config):
         self.sessions = sessions
         self.config = config
@@ -62,6 +67,9 @@ class ProdB():
             sessions,
             special_tokens=["[mask]"],
         )
+
+
+
 
         # Get mask token id for masked language model
         self.mask_token_id = self.vectorize_layer(["[mask]"]).numpy()[0][0]

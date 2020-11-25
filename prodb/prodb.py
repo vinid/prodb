@@ -5,6 +5,7 @@ from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras.layers.experimental.preprocessing import TextVectorization
 from dataclasses import dataclass
+import tqdm
 import pandas as pd
 import numpy as np
 
@@ -200,6 +201,39 @@ class ProdB():
 
     def convert_ids_to_tokens(self, id):
         return self.id2token[id]
+
+    def get_embeddings_for_sessions(self, encoder_layer, sessions):
+
+        pretrained_bert_model = tf.keras.Model(
+            self.bert_masked_model.input, self.bert_masked_model.get_layer("encoder_" + str(encoder_layer) + "/ffn_layernormalization").output
+        )
+        pretrained_bert_model.trainable = False
+        collect_embeddings = []
+        for sess in sessions:
+            k = self.vectorize_layer(sess)
+            embeddings = (pretrained_bert_model.predict(k)[0])
+            sample_length = len(sess.split())
+            embeddings = embeddings[0:sample_length]
+            collect_embeddings.append(np.average(embeddings, axis=0))
+        return collect_embeddings
+
+
+    def run_several_predictions(self, sessions):
+        gt = []
+        pbar = tqdm.tqdm(total=(len(sessions)))
+        predictions = []
+        for index, a in enumerate(sessions):
+            splitted = a.split()
+
+            to_predict = splitted[-1]
+            splitted[-1] = "[mask]"
+            joined = " ".join(splitted)
+            gt.append(to_predict)
+            predictions.append(self.predict_from_tokens(joined))
+            pbar.update(1)
+        pbar.close()
+
+        return {"ground" : gt, "top_10_predictions" : predictions}
 
     def predict_from_tokens(self, string_ids):
         sample_tokens = self.vectorize_layer([string_ids])

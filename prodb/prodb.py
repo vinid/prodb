@@ -58,10 +58,10 @@ class ProdB():
             return [self.loss_tracker]
 
     def __repr__(self):
-        return "EMB_DIM_{config.EMBED_DIM}_EPOCHS_{config.EPOCHS}_NUM_LAYERS_{config.NUM_LAYERS}".format(config=self.config)
+        return "EMB_DIM_{config.EMBED_DIM}_EPOCHS_{config.EPOCHS}_NUM_LAYERS_{config.NUM_LAYERS}_DATA_RATIO_{config.DATA_RATIO}".format(config=self.config)
 
     def __str__(self):
-        return "EMB_DIM_{config.EMBED_DIM}_EPOCHS_{config.EPOCHS}_NUM_LAYERS_{config.NUM_LAYERS}".format(config=self.config)
+        return "EMB_DIM_{config.EMBED_DIM}_EPOCHS_{config.EPOCHS}_NUM_LAYERS_{config.NUM_LAYERS}_DATA_RATIO_{config.DATA_RATIO}".format(config=self.config)
 
     def __init__(self, sessions, config):
         self.sessions = sessions

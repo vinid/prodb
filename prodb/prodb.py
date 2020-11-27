@@ -4,9 +4,7 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras.layers.experimental.preprocessing import TextVectorization
-from dataclasses import dataclass
 import tqdm
-import pandas as pd
 import numpy as np
 
 class ProdB():
@@ -58,10 +56,10 @@ class ProdB():
             return [self.loss_tracker]
 
     def __repr__(self):
-        return "EMB_DIM_{config.EMBED_DIM}_EPOCHS_{config.EPOCHS}_NUM_LAYERS_{config.NUM_LAYERS}_DATA_RATIO_{config.DATA_RATIO}".format(config=self.config)
+        return "EMB_DIM_{config.EMBED_DIM}_EPOCHS_{config.EPOCHS}_NUM_LAYERS_{config.NUM_LAYERS}_DATA_RATIO_{config.DATA_RATIO}_MASKING_PROBABILITY_{config.MASKING_PROBABILITY}".format(config=self.config)
 
     def __str__(self):
-        return "EMB_DIM_{config.EMBED_DIM}_EPOCHS_{config.EPOCHS}_NUM_LAYERS_{config.NUM_LAYERS}_DATA_RATIO_{config.DATA_RATIO}".format(config=self.config)
+        return "EMB_DIM_{config.EMBED_DIM}_EPOCHS_{config.EPOCHS}_NUM_LAYERS_{config.NUM_LAYERS}_DATA_RATIO_{config.DATA_RATIO}_MASKING_PROBABILITY_{config.MASKING_PROBABILITY}".format(config=self.config)
 
     def __init__(self, sessions, config):
         self.sessions = sessions
@@ -104,7 +102,7 @@ class ProdB():
 
     def get_masked_input_and_labels(self, encoded_texts):
         # 15% BERT masking
-        inp_mask = np.random.rand(*encoded_texts.shape) < 0.15
+        inp_mask = np.random.rand(*encoded_texts.shape) < self.config.MASKING_PROBABILITY
         # Do not mask special tokens
         inp_mask[encoded_texts <= 2] = False
         # Set targets to -1 by default, it means ignore

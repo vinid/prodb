@@ -69,9 +69,6 @@ class ProdB():
             special_tokens=["[mask]"],
         )
 
-
-
-
         # Get mask token id for masked language model
         self.mask_token_id = self.vectorize_layer(["[mask]"]).numpy()[0][0]
 
@@ -211,20 +208,32 @@ class ProdB():
     def convert_ids_to_tokens(self, id):
         return self.id2token[id]
 
-    def get_embeddings_for_sessions(self, encoder_layer, sessions):
-
+    def get_embeddings_for_sessions(self, encoder_layer, sessions, pooling="average"):
         pretrained_bert_model = tf.keras.Model(
-            self.bert_masked_model.input, self.bert_masked_model.get_layer("encoder_" + str(encoder_layer) + "/ffn_layernormalization").output
+            self.bert_masked_model.input,
+            self.bert_masked_model.get_layer("encoder_" + str(encoder_layer) + "/ffn_layernormalization").output
         )
         pretrained_bert_model.trainable = False
+
+        inputs = keras.layers.Input((self.config.MAX_LEN,), dtype=tf.int64)
+        sequence_output = pretrained_bert_model(inputs)
+
+        if pooling == "average":
+            pooled_output = keras.layers.GlobalAveragePooling1D()(sequence_output)
+        elif pooling == "max":
+            pooled_output = keras.layers.GlobalMaxPooling1D()(sequence_output)
+        else:
+            raise Exception("Pooling method not supported")
+
+        prediction_model = keras.Model(inputs, pooled_output, name="sequence")
+
         collect_embeddings = []
         pbar = tqdm.tqdm(total=(len(sessions)))
         for sess in sessions:
             k = self.vectorize_layer([sess])
-            embeddings = (pretrained_bert_model.predict(k)[0])
-            sample_length = len(sess.split())
-            embeddings = embeddings[0:sample_length]
-            collect_embeddings.append(np.average(embeddings, axis=0))
+            embeddings = (prediction_model.predict(k)[0])
+
+            collect_embeddings.append((embeddings))
             pbar.update(1)
         pbar.close()
         return collect_embeddings

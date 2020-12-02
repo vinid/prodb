@@ -208,6 +208,7 @@ class ProdB():
     def convert_ids_to_tokens(self, id):
         return self.id2token[id]
 
+
     def get_embeddings_for_sessions(self, encoder_layer, sessions, pooling="average"):
         pretrained_bert_model = tf.keras.Model(
             self.bert_masked_model.input,
@@ -223,20 +224,14 @@ class ProdB():
         elif pooling == "max":
             pooled_output = keras.layers.GlobalMaxPooling1D()(sequence_output)
         else:
-            raise Exception("Pooling method not supported")
+            raise Exception("type of pooling not supported")
 
         prediction_model = keras.Model(inputs, pooled_output, name="sequence")
 
-        collect_embeddings = []
-        pbar = tqdm.tqdm(total=(len(sessions)))
-        for sess in sessions:
-            k = self.vectorize_layer([sess])
-            embeddings = (prediction_model.predict(k)[0])
+        k = self.vectorize_layer(sessions)
+        embeddings = (prediction_model.predict(k))
 
-            collect_embeddings.append((embeddings))
-            pbar.update(1)
-        pbar.close()
-        return collect_embeddings
+        return embeddings
 
 
     def run_several_predictions(self, sessions):

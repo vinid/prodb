@@ -212,7 +212,7 @@ class ProdB():
     def get_embeddings_for_sessions(self, encoder_layer, sessions, pooling="average"):
         pretrained_bert_model = tf.keras.Model(
             self.bert_masked_model.input,
-            self.bert_masked_model.get_layer("encoder_" + str(encoder_layer) + "/ffn_layernormalization").output
+            self.bert_masked_model.get_layer("encoder_" + str(encoder_layer) + "/ffn").output
         )
         pretrained_bert_model.trainable = False
 

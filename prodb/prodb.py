@@ -209,10 +209,18 @@ class ProdB():
         return self.id2token[id]
 
 
-    def get_embeddings_for_sessions(self, encoder_layer, sessions, pooling="average"):
+    def get_embeddings_for_sessions(self, encoder_layer, sessions, pooling="average", output_layer_name = "normalization"):
+
+        if output_layer_name == "normalization":
+            output_layer =  self.bert_masked_model.get_layer("encoder_" + str(encoder_layer) + "/ffn_layernormalization").output
+        elif output_layer_name == "simple":
+            output_layer = self.bert_masked_model.get_layer("encoder_" + str(encoder_layer) + "/ffn").output
+        else:
+            raise Exception("Non valid output layer name")
+
         pretrained_bert_model = tf.keras.Model(
             self.bert_masked_model.input,
-            self.bert_masked_model.get_layer("encoder_" + str(encoder_layer) + "/ffn").output
+            output_layer
         )
         pretrained_bert_model.trainable = False
 

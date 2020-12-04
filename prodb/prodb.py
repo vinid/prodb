@@ -211,36 +211,21 @@ class ProdB():
 
     def get_embeddings_for_sessions(self, encoder_layer, sessions, pooling="average", output_layer_name = "normalization"):
 
-        if output_layer_name == "normalization":
-            output_layer =  self.bert_masked_model.get_layer("encoder_" + str(encoder_layer) + "/ffn_layernormalization").output
-        elif output_layer_name == "simple":
-            output_layer = self.bert_masked_model.get_layer("encoder_" + str(encoder_layer) + "/ffn").output
-        else:
-            raise Exception("Non valid output layer name")
-
         pretrained_bert_model = tf.keras.Model(
-            self.bert_masked_model.input,
-            output_layer
+            self.bert_masked_model.input, self.bert_masked_model.get_layer("encoder_" + str(encoder_layer) + "/ffn_layernormalization").output
         )
         pretrained_bert_model.trainable = False
-
-        inputs = keras.layers.Input((self.config.MAX_LEN,), dtype=tf.int64)
-        sequence_output = pretrained_bert_model(inputs)
-
-        if pooling == "average":
-            pooled_output = keras.layers.GlobalAveragePooling1D()(sequence_output)
-        elif pooling == "max":
-            pooled_output = keras.layers.GlobalMaxPooling1D()(sequence_output)
-        else:
-            raise Exception("type of pooling not supported")
-
-        prediction_model = keras.Model(inputs, pooled_output, name="sequence")
-
-        k = self.vectorize_layer(sessions)
-        embeddings = (prediction_model.predict(k))
-
-        return embeddings
-
+        collect_embeddings = []
+        pbar = tqdm.tqdm(total=(len(sessions)))
+        for sess in sessions:
+            k = self.vectorize_layer([sess])
+            embeddings = (pretrained_bert_model.predict(k)[0])
+            sample_length = len(sess.split())
+            embeddings = embeddings[0:sample_length]
+            collect_embeddings.append(np.average(embeddings, axis=0))
+            pbar.update(1)
+        pbar.close()
+        return collect_embeddings
 
     def run_several_predictions(self, sessions):
         gt = []

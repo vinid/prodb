@@ -149,7 +149,7 @@ class ProdB():
         ffn = keras.Sequential(
             [
                 layers.Dense(self.config.FF_DIM, activation="relu"),
-                layers.Dense(self.config.EMBED_DIM),
+                layers.Dense(self.config.EMBED_DIM, name="encoder_{}/simple".format(i)),
             ],
             name="encoder_{}/ffn".format(i),
         )
@@ -214,7 +214,7 @@ class ProdB():
         if output_layer_name == "normalization":
             output_layer =  self.bert_masked_model.get_layer("encoder_" + str(encoder_layer) + "/ffn_layernormalization").output
         elif output_layer_name == "simple":
-            output_layer = self.bert_masked_model.get_layer("encoder_" + str(encoder_layer) + "/ffn").output
+            output_layer = self.bert_masked_model.get_layer("encoder_" + str(encoder_layer) + "/simple").output
         else:
             raise Exception("Non valid output layer name")
 

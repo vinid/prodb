@@ -239,7 +239,7 @@ class ProdB():
         if output_layer_name == "normalization":
             output_layer =  self.bert_masked_model.get_layer("encoder_" + str(encoder_layer) + "/ffn_layernormalization").output
         elif output_layer_name == "simple":
-            output_layer = self.bert_masked_model.get_layer("encoder_" + str(encoder_layer) + "/simple").output
+            output_layer = self.bert_masked_model.get_layer("encoder_" + str(encoder_layer) + "/multiheadattention").output
         else:
             raise Exception("Non valid output layer name")
 

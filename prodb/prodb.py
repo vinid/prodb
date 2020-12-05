@@ -234,6 +234,33 @@ class ProdB():
         pbar.close()
         return collect_embeddings
 
+    def get_last_embeddings_for_sessions(self, encoder_layer, sessions, pooling="average", output_layer_name = "normalization"):
+
+        if output_layer_name == "normalization":
+            output_layer =  self.bert_masked_model.get_layer("encoder_" + str(encoder_layer) + "/ffn_layernormalization").output
+        elif output_layer_name == "simple":
+            output_layer = self.bert_masked_model.get_layer("encoder_" + str(encoder_layer) + "/simple").output
+        else:
+            raise Exception("Non valid output layer name")
+
+        pretrained_bert_model = tf.keras.Model(
+            self.bert_masked_model.input, output_layer
+        )
+        pretrained_bert_model.trainable = False
+        collect_embeddings = []
+        pbar = tqdm.tqdm(total=(len(sessions)))
+        for sess in sessions:
+            sess = sess + " [mask]"
+            k = self.vectorize_layer([sess])
+            embeddings = (pretrained_bert_model.predict(k)[0])
+            sample_length = len(sess.split())
+            embeddings = embeddings[sample_length - 1]
+            collect_embeddings.append(embeddings)
+            pbar.update(1)
+        pbar.close()
+        return collect_embeddings
+
+
     def run_several_predictions(self, sessions):
         gt = []
         pbar = tqdm.tqdm(total=(len(sessions)))

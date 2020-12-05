@@ -243,6 +243,7 @@ class ProdB():
         else:
             raise Exception("Non valid output layer name")
 
+
         pretrained_bert_model = tf.keras.Model(
             self.bert_masked_model.input, output_layer
         )

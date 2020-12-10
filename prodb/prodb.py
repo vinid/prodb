@@ -297,7 +297,7 @@ class ProdB():
 
         return answers
 
-    @tf.keras.utils.register_keras_serializable
+    @tf.keras.utils.register_keras_serializable()
     def custom_standardization(self, input_data):
         lowercase = tf.strings.lower(input_data)
         return lowercase

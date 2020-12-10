@@ -317,7 +317,6 @@ class ProdB():
         vectorize_layer = TextVectorization(
             max_tokens=self.config.VOCAB_SIZE,
             output_mode="int",
-            standardize=self.custom_standardization,
             output_sequence_length=self.config.MAX_LEN,
         )
         vectorize_layer.adapt(texts)

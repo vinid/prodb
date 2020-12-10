@@ -209,8 +209,7 @@ class ProdB():
         return self.id2token[id]
 
 
-    def get_embeddings_for_sessions(self, encoder_layer, sessions, pooling="average", output_layer_name = "normalization"):
-
+    def get_embeddings_for_sessions(self, encoder_layer, sessions, pooling="average", output_layer_name = "normalization", make_average=True):
         if output_layer_name == "normalization":
             output_layer =  self.bert_masked_model.get_layer("encoder_" + str(encoder_layer) + "/ffn_layernormalization").output
         elif output_layer_name == "simple":
@@ -229,7 +228,10 @@ class ProdB():
             embeddings = (pretrained_bert_model.predict(k)[0])
             sample_length = len(sess.split())
             embeddings = embeddings[0:sample_length]
-            collect_embeddings.append(np.average(embeddings, axis=0))
+            if make_average:
+                collect_embeddings.append(np.average(embeddings, axis=0))
+            else:
+                collect_embeddings.append(embeddings)
             pbar.update(1)
         pbar.close()
         return collect_embeddings
@@ -297,7 +299,6 @@ class ProdB():
 
         return answers
 
-    @tf.keras.utils.register_keras_serializable(package="Custom", name=None)
     def custom_standardization(self, input_data):
         lowercase = tf.strings.lower(input_data)
         return lowercase

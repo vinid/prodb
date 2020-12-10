@@ -61,7 +61,8 @@ class ProdB(tf.keras.Model):
     def __str__(self):
         return "EMB_DIM_{config.EMBED_DIM}_EPOCHS_{config.EPOCHS}_NUM_LAYERS_{config.NUM_LAYERS}_DATA_RATIO_{config.DATA_RATIO}_MASKING_PROBABILITY_{config.MASKING_PROBABILITY}".format(config=self.config)
 
-    def __init__(self, sessions, config):
+    def __init__(self, sessions, config, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.sessions = sessions
         self.config = config
         self.vectorize_layer = self.get_vectorize_layer(

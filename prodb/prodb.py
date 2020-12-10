@@ -7,7 +7,7 @@ from tensorflow.keras.layers.experimental.preprocessing import TextVectorization
 import tqdm
 import numpy as np
 
-class ProdB:
+class ProdB():
 
     class MaskedLanguageModel(tf.keras.Model):
 
@@ -61,8 +61,7 @@ class ProdB:
     def __str__(self):
         return "EMB_DIM_{config.EMBED_DIM}_EPOCHS_{config.EPOCHS}_NUM_LAYERS_{config.NUM_LAYERS}_DATA_RATIO_{config.DATA_RATIO}_MASKING_PROBABILITY_{config.MASKING_PROBABILITY}".format(config=self.config)
 
-    def __init__(self, sessions, config, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, sessions, config):
         self.sessions = sessions
         self.config = config
         self.vectorize_layer = self.get_vectorize_layer(
@@ -298,6 +297,11 @@ class ProdB:
 
         return answers
 
+    @tf.keras.utils.register_keras_serializable(package="Custom", name=None)
+    def custom_standardization(self, input_data):
+        lowercase = tf.strings.lower(input_data)
+        return lowercase
+
     def get_vectorize_layer(self, texts, special_tokens=["[MASK]"]):
         """Build Text vectorization layer
 
@@ -313,6 +317,7 @@ class ProdB:
         vectorize_layer = TextVectorization(
             max_tokens=self.config.VOCAB_SIZE,
             output_mode="int",
+            standardize=self.custom_standardization,
             output_sequence_length=self.config.MAX_LEN,
         )
         vectorize_layer.adapt(texts)

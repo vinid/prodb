@@ -297,7 +297,6 @@ class ProdB():
 
         return answers
 
-    @tf.keras.utils.register_keras_serializable()
     def custom_standardization(self, input_data):
         lowercase = tf.strings.lower(input_data)
         return lowercase
@@ -317,6 +316,7 @@ class ProdB():
         vectorize_layer = TextVectorization(
             max_tokens=self.config.VOCAB_SIZE,
             output_mode="int",
+            standardize=self.custom_standardization,
             output_sequence_length=self.config.MAX_LEN,
         )
         vectorize_layer.adapt(texts)

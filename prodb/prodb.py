@@ -7,7 +7,7 @@ from tensorflow.keras.layers.experimental.preprocessing import TextVectorization
 import tqdm
 import numpy as np
 
-class ProdB():
+class ProdB(tf.keras.Model):
 
     class MaskedLanguageModel(tf.keras.Model):
 

@@ -92,13 +92,21 @@ class ProdB():
 
     def __call__(self, *args, **kwargs):
         self.bert_masked_model.fit(self.mlm_ds, epochs=self.config.EPOCHS, callbacks=[])
-        self.bert_masked_model.save("bert_mlm_imdb.h5")
+        self.bert_masked_model.save(self.__str__() + ".h5")
+
         vectorizer = self.vectorize_layer
 
         # Pickle the config and weights
         pickle.dump({'config': vectorizer.get_config(),
                      'weights': vectorizer.get_weights()}
-                    , open("tv_layer.pkl", "wb"))
+                    , open(self.__str__() +"_TEXT_VECTORIZER.pkl", "wb"))
+
+        pickle.dump({
+                "id2token" : self.id2token,
+                "token2id" :  self.token2id,
+                "config" : self.config
+            }, open(self.__str__() + "_CONFIG.pkl", "wb"))
+
 
         """
         to load

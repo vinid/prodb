@@ -66,11 +66,11 @@ class ProdB():
         self.config = config
         self.vectorize_layer = self.get_vectorize_layer(
             sessions,
-            special_tokens=["[mask]"],
+            special_tokens=["mask"],
         )
 
         # Get mask token id for masked language model
-        self.mask_token_id = self.vectorize_layer(["[mask]"]).numpy()[0][0]
+        self.mask_token_id = self.vectorize_layer(["mask"]).numpy()[0][0]
 
         # Prepare data for masked language model
         x_all_review = self.encode(sessions)
@@ -253,7 +253,7 @@ class ProdB():
         collect_embeddings = []
         pbar = tqdm.tqdm(total=(len(sessions)))
         for sess in sessions:
-            sess = sess + " [mask]"
+            sess = sess + " mask"
             k = self.vectorize_layer([sess])
             embeddings = (pretrained_bert_model.predict(k)[0])
             sample_length = len(sess.split())
@@ -272,7 +272,7 @@ class ProdB():
             splitted = a.split()
 
             to_predict = splitted[-1]
-            splitted[-1] = "[mask]"
+            splitted[-1] = "mask"
             joined = " ".join(splitted)
             gt.append(to_predict)
             predictions.append(self.predict_from_tokens(joined))
@@ -303,7 +303,7 @@ class ProdB():
         lowercase = tf.strings.lower(input_data)
         return lowercase
 
-    def get_vectorize_layer(self, texts, special_tokens=["[MASK]"]):
+    def get_vectorize_layer(self, texts, special_tokens=["mask"]):
         """Build Text vectorization layer
 
         Args:
@@ -326,7 +326,7 @@ class ProdB():
 
         # Insert mask token in vocabulary
         vocab = vectorize_layer.get_vocabulary()
-        vocab = vocab[2: self.config.VOCAB_SIZE - len(special_tokens)] + ["[mask]"]
+        vocab = vocab[2: self.config.VOCAB_SIZE - len(special_tokens)] + ["mask"]
         vectorize_layer.set_vocabulary(vocab)
         return vectorize_layer
 

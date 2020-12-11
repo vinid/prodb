@@ -5,6 +5,7 @@ from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras.layers.experimental.preprocessing import TextVectorization
 import tqdm
+import pickle
 import numpy as np
 
 class ProdB():
@@ -92,6 +93,22 @@ class ProdB():
     def __call__(self, *args, **kwargs):
         self.bert_masked_model.fit(self.mlm_ds, epochs=self.config.EPOCHS, callbacks=[])
         self.bert_masked_model.save("bert_mlm_imdb.h5")
+        vectorizer = self.vectorize_layer
+
+        # Pickle the config and weights
+        pickle.dump({'config': vectorizer.get_config(),
+                     'weights': vectorizer.get_weights()}
+                    , open("tv_layer.pkl", "wb"))
+
+        """
+        to load
+
+        from_disk = pickle.load(open("tv_layer.pkl", "rb"))
+        new_v = TextVectorization.from_config(from_disk['config'])
+        # You have to call `adapt` with some dummy data (BUG in Keras)
+        new_v.adapt(tf.data.Dataset.from_tensor_slices(["xyz"]))
+        new_v.set_weights(from_disk['weights'])
+        """
 
     def encode(self, texts):
         encoded_texts = self.vectorize_layer(texts)

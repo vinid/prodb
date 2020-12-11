@@ -299,6 +299,10 @@ class ProdB():
 
         return answers
 
+    def custom_standardization(self, input_data):
+        lowercase = tf.strings.lower(input_data)
+        return lowercase
+
     def get_vectorize_layer(self, texts, special_tokens=["[MASK]"]):
         """Build Text vectorization layer
 

@@ -289,12 +289,20 @@ class ProdB():
         return collect_embeddings
 
 
-    def run_several_predictions(self, sessions):
+    def run_several_predictions(self, sessions, subword_prefix=None):
         gt = []
         pbar = tqdm.tqdm(total=(len(sessions)))
         predictions = []
+
         for index, a in enumerate(sessions):
             splitted = a.split()
+
+            if subword_prefix is not None:
+                for index in range(0, len(splitted)):
+                    real_index = len(splitted) - 1 - index
+                    if subword_prefix not in splitted[real_index]:
+                        splitted = splitted[:real_index+1]
+                        break
 
             to_predict = splitted[-1]
             splitted[-1] = "mask"

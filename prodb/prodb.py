@@ -300,7 +300,7 @@ class ProdB():
             if subword_prefix is not None:
                 for index in range(0, len(splitted)):
                     real_index = len(splitted) - 1 - index
-                    if subword_prefix not in splitted[real_index]:
+                    if not splitted[real_index].startswith(subword_prefix):
                         splitted = splitted[:real_index+1]
                         break
 

@@ -19,16 +19,12 @@ class ProdB():
             )
             self.loss_tracker = tf.keras.metrics.Mean(name="loss")
 
-
-
         def train_step(self, inputs):
             if len(inputs) == 3:
                 features, labels, sample_weight = inputs
             else:
                 features, labels = inputs
                 sample_weight = None
-
-
 
             with tf.GradientTape() as tape:
                 predictions = self(features, training=True)
@@ -235,6 +231,9 @@ class ProdB():
 
 
     def get_embeddings_for_sessions(self, encoder_layer, sessions, pooling="average", output_layer_name = "normalization", make_average=True):
+        """
+        This method provides different ways of extracting a session embedding given in input a sequence of sessions
+        """
         if output_layer_name == "normalization":
             output_layer =  self.bert_masked_model.get_layer("encoder_" + str(encoder_layer) + "/ffn_layernormalization").output
         elif output_layer_name == "simple":
@@ -288,8 +287,10 @@ class ProdB():
         pbar.close()
         return collect_embeddings
 
-
     def run_several_predictions(self, sessions, subword_prefix=None):
+        """
+        Run the NEXT Item Prediction task
+        """
         gt = []
         pbar = tqdm.tqdm(total=(len(sessions)))
         predictions = []

@@ -2,6 +2,11 @@
 Product Embeddings with Prod2BERT
 =================================
 
+.. image:: https://github.com/vinid/prodb/raw/master/training_example.jpg
+   :align: center
+   :width: 600px
+
+
 Abstract
 ========
 
@@ -65,7 +70,7 @@ Then, you need to first declare the config class with the parameters of interest
 
     config = Config()
 
- Then, you can simply use the prodb class and give it in input a sequence of sessions:
+Then, you can simply use the prodb class and give it in input a sequence of sessions:
 
 .. code-block:: python
 

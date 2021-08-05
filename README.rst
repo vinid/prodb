@@ -79,5 +79,13 @@ Then, you can simply use the prodb class and give it in input a sequence of sess
     sessions = ["item1 item2 item3", "item2 item8 item9 item1 item5"]
 
     ProdB(sessions, config)
+    ProdB()
+
+    next_element_prediction = ["item1 item8 item9"]
+    # the model will use the sequence item1 item8 to predict the next item (item9 is considered the next item to predict)
+    # the model will return the groundtruth (item9) and the items predicted by the model
+
+    results = pb.run_next_item_predictions(next_element_prediction)
 
 
+After training, you should find the model saved on disk

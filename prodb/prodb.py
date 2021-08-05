@@ -287,7 +287,7 @@ class ProdB():
         pbar.close()
         return collect_embeddings
 
-    def run_several_predictions(self, sessions, subword_prefix=None):
+    def run_next_item_predictions(self, sessions, subword_prefix=None):
         """
         Run the NEXT Item Prediction task
         """

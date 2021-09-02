@@ -48,7 +48,7 @@ You should first git clone the repository and install the package locally. From 
 
 .. code-block:: bash
 
-    pip install -e
+    pip install -e .
 
 Then, you need to first declare the config class with the parameters of interest
 
@@ -78,8 +78,8 @@ Then, you can simply use the prodb class and give it in input a sequence of sess
 
     sessions = ["item1 item2 item3", "item2 item8 item9 item1 item5"]
 
-    ProdB(sessions, config)
-    ProdB()
+    pb = ProdB(sessions, config)
+    pb()
 
     next_element_prediction = ["item1 item8 item9"]
     # the model will use the sequence item1 item8 to predict the next item (item9 is considered the next item to predict)

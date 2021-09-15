@@ -87,7 +87,7 @@ class ProdB():
         #bert_masked_model.summary()
 
     def __call__(self, *args, **kwargs):
-        self.bert_masked_model.fit(self.mlm_ds, epochs=self.config.EPOCHS, callbacks=[])
+        self.bert_masked_model.fit(self.mlm_ds, epochs=self.config.EPOCHS, callbacks=kwargs.get('callbacks', None))
         self.bert_masked_model.save(self.__str__() + ".h5")
 
         vectorizer = self.vectorize_layer

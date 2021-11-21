@@ -62,6 +62,7 @@ Then, you need to first declare the config class with the parameters of interest
         VOCAB_SIZE = 20000
         EMBED_DIM = 128
         NUM_HEAD = 8
+        EPOCHS = 100
         MASKING_PROBABILITY = 0.25
         DATA_RATIO = 10 # dummy variable, we used this to understand if data size had an effect
         FF_DIM = 128

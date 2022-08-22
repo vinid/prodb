@@ -25,8 +25,8 @@ Citation for the paper:
 
     @inproceedings{tagliabue-etal-2021-bert,
     title = "{BERT} Goes Shopping: Comparing Distributional Models for Product Representations",
-    author = "Tagliabue, Jacopo  and
-      Bianchi, Federico  and
+    author = "Bianchi, Jacopo  and
+      Tagliabue, Jacopo  and
       Yu, Bingqing",
     booktitle = "Proceedings of The 4th Workshop on e-Commerce and NLP",
     month = aug,

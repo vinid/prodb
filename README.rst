@@ -59,7 +59,7 @@ Then, you need to first declare the config class with the parameters of interest
         MAX_LEN = 20
         BATCH_SIZE = 32
         LR = 0.001
-        VOCAB_SIZE = 20000
+        VOCAB_SIZE = 6
         EMBED_DIM = 128
         NUM_HEAD = 8
         EPOCHS = 100
